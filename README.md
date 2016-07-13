@@ -1,0 +1,2 @@
+# WhaleBot
+NodeJS IRC bot
