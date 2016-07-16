@@ -858,13 +858,14 @@ function handleOrderCommand(args) {
 
     // Update?
     if (command.substr(0, 6) == 'update') {
-        if (words.length < 2 || words.length > 5) {
+        oName = command.substr(6);
+
+        if (words.length < 2 || oName.length === 0) {
             bot.notice(from, 'Syntax: @update<orderset> <priority> <region> <link> <optional info>');
             bot.notice(from, 'Syntax: @update<orderset> clear <optional prio>');
             return false;
         }
 
-        oName = command.substr(6);
         command = words[1].toLowerCase();
 
         if (oName.length === 0) {
