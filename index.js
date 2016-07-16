@@ -187,7 +187,7 @@ bot.addListener('message', function (from, to, text, message) {
 
     // Handle primary (admin and order) commands
     if (text[0] == '@') {
-        var adminCommands = ['config', 'join', 'part', 'say', 'do', 'notice', 'whois', 'chanlist', 'addautojoin', 'deleteautojoin', 'adduser', 'deleteuser', 'listusers', 'addchan', 'deletechan', 'listchans', 'addadmin', 'deleteadmin', 'listadmins', 'addorderset', 'deleteorderset', 'listordersets'];
+        var adminCommands = ['config', 'join', 'part', 'say', 'do', 'notice', 'whois', 'chanlist', 'addautojoin', 'deleteautojoin', 'listautojoin', 'adduser', 'deleteuser', 'listusers', 'addchan', 'deletechan', 'listchans', 'addadmin', 'deleteadmin', 'listadmins', 'addorderset', 'deleteorderset', 'listordersets'];
 
         var isAdminCB;
 
@@ -393,17 +393,17 @@ function handlePrimaryCommand(args) {
 
             chName = words[1].toLowerCase();
 
-            chan = store.channels.find(function (ch) {
+            chan = store.channels.findIndex(function (ch) {
                 return ch.channel == chName;
             });
 
-            if (chan === undefined) {
+            if (chan === -1) {
                 bot.notice(from, chName + ' is not a registered channel');
                 return false;
             }
 
-            chan.autojoin = 1;
-            db.run('UPDATE channels SET autojoin = 1 WHERE id = ?', chan.id);
+            store.channels[chan].autojoin = 1;
+            db.run('UPDATE channels SET autojoin = 1 WHERE id = ?', chan);
 
             bot.notice(from, 'Will autojoin ' + chName + ' from now on');
             break;
@@ -415,19 +415,36 @@ function handlePrimaryCommand(args) {
 
             chName = words[1].toLowerCase();
 
-            chan = store.channels.find(function (ch) {
+            chan = store.channels.findIndex(function (ch) {
                 return ch.channel == chName;
             });
 
-            if (chan === undefined) {
+            if (chan === -1) {
                 bot.notice(from, chName + ' is not a registered channel');
                 return false;
             }
 
-            chan.autojoin = 0;
-            db.run('UPDATE channels SET autojoin = 0 WHERE id = ?', chan.id);
+            store.channels[chan].autojoin = 0;
+            db.run('UPDATE channels SET autojoin = 0 WHERE id = ?', chan);
 
             bot.notice(from, 'Will NOT autojoin ' + chName + ' from now on');
+            break;
+        case 'listautojoin':
+            if (words.length > 1) {
+                bot.notice(from, 'Syntax: @listautojoin');
+                return false;
+            }
+
+            var chans = store.channels.filter(function (ch) {
+                return ch.autojoin == 1;
+            });
+
+            if (chans.length === 0) {
+                bot.notice(from, 'No channels in autojoin list');
+                return false;
+            }
+
+            bot.notice(from, 'Autojoins: ' + chans.join(', '));
             break;
         case 'chanlist':
             /**
@@ -941,7 +958,7 @@ function handleOrderCommand(args) {
             prio = parseInt(command);
             var region = words[2];
             var link = words[3];
-            var info = (words.length == 5 ? words[4] : '');
+            var info = (words.length > 4 ? words.slice(4).join(' ') : '');
 
             // Check parameter lengths
             if (prio > 5 || prio < 1 || isNaN(prio) || region.length > 64 || link.length > 64 || info.length > 64) {
