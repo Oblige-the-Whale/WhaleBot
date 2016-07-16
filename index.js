@@ -437,6 +437,8 @@ function handlePrimaryCommand(args) {
 
             var chans = store.channels.filter(function (ch) {
                 return ch.autojoin == 1;
+            }).map(function (ch) {
+                return ch.channel;
             });
 
             if (chans.length === 0) {
