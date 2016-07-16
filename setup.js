@@ -29,7 +29,7 @@ setTimeout(function () {
     db.run('INSERT INTO channels (`channel`, `autojoin`) VALUES ("#whalebot", 1)');
 
     // Config
-    db.run('INSERT INTO config (`key`, `value`) VALUES ("nick", "WhaleBot"), ("userName", "WhaleBot"), ("realName", "WhaleBot"), ("nickservPassword", "123456")');
+    db.run('INSERT INTO config (`key`, `value`) VALUES ("nick", "WhaleBot"), ("userName", "WhaleBot"), ("realName", "WhaleBot"), ("nickservPassword", "saltysugar")');
 
     console.log('Tables populated with default values');
 }, 500);
