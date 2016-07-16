@@ -193,15 +193,10 @@ bot.addListener('message', function (from, to, text, message) {
 
         // Admin command called
         if (adminCommands.indexOf(text.split(' ')[0].substr(1).toLowerCase()) > -1) {
-            // isAdmin(from, handlePrimaryCommand, [from, to, text, message]);
-            isAdminCB = handlePrimaryCommand;
+            isAdmin(from, handlePrimaryCommand, [from, to, text, message]);
         } else {
-            // handleOrderCommand(from, to, text, message);
-            isAdminCB = handleOrderCommand;
+            isIdentified(from, handleOrderCommand, [from, to, text, message]);
         }
-
-        isAdmin(from, isAdminCB, [from, to, text, message]);
-
     }
 
     // Handle secondary (user) commands
@@ -239,25 +234,28 @@ function privateMessage(from, text, message) {
 
 function isAdmin(nick, cb, cbarg) {
     if (store.admins.find(function (admin) { return admin.nick == nick; }) !== undefined) {
-        // Is identified?
-        var user = store.users_status.find(function (u) {
-            return u.nick == nick;
-        });
+        return isIdentified(nick, cb, cbarg);
+    } else {
+        return false;
+    }
+}
 
-        if (user === undefined || user.status < 3) {
-            waitingForNickServ = true;
-            nickServCallback = cb;
-            nickServArgs = cbarg;
+function isIdentified(nick, cb, cbarg) {
+    var user = store.users_status.find(function (u) {
+        return u.nick == nick;
+    });
 
-            bot.say('NickServ', 'status ' + nick);
-            return false;
-        }
+    if (user === undefined || user.status < 3) {
+        waitingForNickServ = true;
+        nickServCallback = cb;
+        nickServArgs = cbarg;
 
+        bot.say('NickServ', 'status ' + nick);
+        return false;
+    } else {
         // Callback
         cb(cbarg);
     }
-
-    return false;
 }
 
 // Handle primary commands (starting with @)
@@ -876,13 +874,22 @@ function handleOrderCommand(args) {
             return false;
         }
 
-        // Check if user can modify orderset
         var ou = store.orderset_users.find(function (ou) {
             return ou.orderset_id == os.id && ou.user_id == u.id;
         });
 
         if (ou === undefined) {
             bot.notice(from, 'You are not allowed to update this orderset.');
+            return false;
+        }
+
+        // Check if the user is identified
+        var us = store.users_status.find(function (us) {
+            return us.nick == from;
+        });
+
+        if (us === undefined || us.status < 3) {
+            bot.notice(from, 'You must be identified via NickServ.');
             return false;
         }
 
