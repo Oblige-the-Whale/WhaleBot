@@ -403,7 +403,7 @@ function handlePrimaryCommand(args) {
             }
 
             store.channels[chan].autojoin = 1;
-            db.run('UPDATE channels SET autojoin = 1 WHERE id = ?', chan);
+            db.run('UPDATE channels SET autojoin = 1 WHERE id = ?', store.channels[chan].id);
 
             bot.notice(from, 'Will autojoin ' + chName + ' from now on');
             break;
@@ -425,7 +425,7 @@ function handlePrimaryCommand(args) {
             }
 
             store.channels[chan].autojoin = 0;
-            db.run('UPDATE channels SET autojoin = 0 WHERE id = ?', chan);
+            db.run('UPDATE channels SET autojoin = 0 WHERE id = ?', store.channels[chan].id);
 
             bot.notice(from, 'Will NOT autojoin ' + chName + ' from now on');
             break;
