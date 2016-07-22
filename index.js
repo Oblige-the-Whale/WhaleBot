@@ -152,6 +152,13 @@ bot.addListener('part', function (channel, nick, reason, message) {
 bot.addListener('nick', function (oldnick, newnick, channels) {
     // console.log(oldnick + ' is now ' + newnick);
 
+    // Forced nick change of self
+    if (oldnick == store.botConfig.nick) {
+        // Try to revert and identify
+        updateNick();
+        identifyBot();
+    }
+
     // (Re-)Evaluate new nick's status
     bot.say('NickServ', 'status ' + newnick);
 });
@@ -867,12 +874,6 @@ function handleOrderCommand(args) {
         }
 
         command = words[1].toLowerCase();
-
-        if (oName.length === 0) {
-            bot.notice(from, 'Syntax: @update<orderset> <priority> <region> <link> <optional info>');
-            bot.notice(from, 'Syntax: @update<orderset> clear <optional prio>');
-            return false;
-        }
 
         // Get orderset
         os = store.ordersets.find(function (os) {
