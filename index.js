@@ -284,18 +284,18 @@ function handlePrimaryCommand(args) {
         case 'config':
             // Change configuration
             if (words.length != 3 || words[1].length === 0 || words[2].length === 0) {
-                bot.notice(from, 'Syntax: @config <key> <value>');
+                bot.say(from, 'Syntax: @config <key> <value>');
                 return false;
             }
 
             if (!store.botConfig.hasOwnProperty(words[1])) {
-                bot.notice(from, 'Available keys: nick, userName, realName, nickservPassword');
+                bot.say(from, 'Available keys: nick, userName, realName, nickservPassword');
                 return false;
             }
 
             store.botConfig[words[1]] = words[2];
             db.run('UPDATE config SET value = ? WHERE key = ?', words[2], words[1]);
-            bot.notice(from, words[1] + ' updated');
+            bot.say(from, words[1] + ' updated');
 
             var theKey = words[1].toLowerCase();
 
@@ -312,14 +312,14 @@ function handlePrimaryCommand(args) {
         case 'join':
             // Join a channel
             if (words.length != 2 || words[1].length === 0) {
-                bot.notice(from, 'Syntax: @join <channel>');
+                bot.say(from, 'Syntax: @join <channel>');
                 return false;
             }
 
             chName = words[1].toLowerCase();
 
             if (chName.indexOf(',') != -1) {
-                bot.notice(from, 'Illegal character: ,');
+                bot.say(from, 'Illegal character: ,');
                 return false;
             }
 
@@ -341,14 +341,14 @@ function handlePrimaryCommand(args) {
         case 'part':
             // Quit a channel
             if (words.length != 2 || words[1].length === 0) {
-                bot.notice(from, 'Syntax: @part <channel>');
+                bot.say(from, 'Syntax: @part <channel>');
                 return false;
             }
 
             chName = words[1].toLowerCase();
 
             if (chName.indexOf(',') != -1) {
-                bot.notice(from, 'Illegal character: ,');
+                bot.say(from, 'Illegal character: ,');
                 return false;
             }
 
@@ -357,7 +357,7 @@ function handlePrimaryCommand(args) {
         case 'say':
             // Send message to channel or user
             if (words.length < 3) {
-                bot.notice(from, 'Syntax: @say <channel/nick> <message>');
+                bot.say(from, 'Syntax: @say <channel/nick> <message>');
                 return false;
             }
 
@@ -366,7 +366,7 @@ function handlePrimaryCommand(args) {
         case 'do':
             // Send action to channel or user
             if (words.length < 3) {
-                bot.notice(from, 'Syntax: @do <channel/nick> <message>');
+                bot.say(from, 'Syntax: @do <channel/nick> <message>');
                 return false;
             }
 
@@ -375,7 +375,7 @@ function handlePrimaryCommand(args) {
         case 'notice':
             // Send notice to channel or user
             if (words.length < 3) {
-                bot.notice(from, 'Syntax: @notice <channel/nick> <message>');
+                bot.say(from, 'Syntax: @notice <channel/nick> <message>');
                 return false;
             }
 
@@ -384,7 +384,7 @@ function handlePrimaryCommand(args) {
         case 'whois':
             // Request whois on user
             if (words.length != 2) {
-                bot.notice(from, 'Syntax: @whois <nick>');
+                bot.say(from, 'Syntax: @whois <nick>');
                 return false;
             }
 
@@ -394,7 +394,7 @@ function handlePrimaryCommand(args) {
             break;
         case 'addautojoin':
             if (words.length != 2 || words[1].length === 0) {
-                bot.notice(from, 'Syntax: @addautojoin <channel>');
+                bot.say(from, 'Syntax: @addautojoin <channel>');
                 return false;
             }
 
@@ -405,18 +405,18 @@ function handlePrimaryCommand(args) {
             });
 
             if (chan === -1) {
-                bot.notice(from, chName + ' is not a registered channel');
+                bot.say(from, chName + ' is not a registered channel');
                 return false;
             }
 
             store.channels[chan].autojoin = 1;
             db.run('UPDATE channels SET autojoin = 1 WHERE id = ?', store.channels[chan].id);
 
-            bot.notice(from, 'Will autojoin ' + chName + ' from now on');
+            bot.say(from, 'Will autojoin ' + chName + ' from now on');
             break;
         case 'deleteautojoin':
             if (words.length != 2 || words[1].length === 0) {
-                bot.notice(from, 'Syntax: @deleteautojoin <channel>');
+                bot.say(from, 'Syntax: @deleteautojoin <channel>');
                 return false;
             }
 
@@ -427,18 +427,18 @@ function handlePrimaryCommand(args) {
             });
 
             if (chan === -1) {
-                bot.notice(from, chName + ' is not a registered channel');
+                bot.say(from, chName + ' is not a registered channel');
                 return false;
             }
 
             store.channels[chan].autojoin = 0;
             db.run('UPDATE channels SET autojoin = 0 WHERE id = ?', store.channels[chan].id);
 
-            bot.notice(from, 'Will NOT autojoin ' + chName + ' from now on');
+            bot.say(from, 'Will NOT autojoin ' + chName + ' from now on');
             break;
         case 'listautojoin':
             if (words.length > 1) {
-                bot.notice(from, 'Syntax: @listautojoin');
+                bot.say(from, 'Syntax: @listautojoin');
                 return false;
             }
 
@@ -449,11 +449,11 @@ function handlePrimaryCommand(args) {
             });
 
             if (chans.length === 0) {
-                bot.notice(from, 'No channels in autojoin list');
+                bot.say(from, 'No channels in autojoin list');
                 return false;
             }
 
-            bot.notice(from, 'Autojoins: ' + chans.join(', '));
+            bot.say(from, 'Autojoins: ' + chans.join(', '));
             break;
         case 'chanlist':
             /**
@@ -486,7 +486,7 @@ function handlePrimaryCommand(args) {
             break;
         case 'adduser':
             if (words.length != 3 || words[1].length === 0 || words[2].length === 0) {
-                bot.notice(from, 'Syntax: @adduser <nick> <orderset>');
+                bot.say(from, 'Syntax: @adduser <nick> <orderset>');
                 return false;
             }
 
@@ -495,7 +495,7 @@ function handlePrimaryCommand(args) {
             });
 
             if (os === undefined) {
-                bot.notice(from, words[2] + ' is not a registered orderset');
+                bot.say(from, words[2] + ' is not a registered orderset');
                 return false;
             }
 
@@ -513,7 +513,7 @@ function handlePrimaryCommand(args) {
                     store.orderset_users.push({orderset_id: osid, user_id: uid});
 
                     db.run('INSERT INTO orderset_users (`orderset_id`, `user_id`) VALUES (?, ?)', osid, uid);
-                    bot.notice(from, words[1] + ' added as user to the ' + words[2] + ' orderset');
+                    bot.say(from, words[1] + ' added as user to the ' + words[2] + ' orderset');
                 });
             } else {
                 uid = u.id;
@@ -522,12 +522,12 @@ function handlePrimaryCommand(args) {
                 store.orderset_users.push({orderset_id: osid, user_id: uid});
 
                 db.run('INSERT INTO orderset_users (`orderset_id`, `user_id`) VALUES (?, ?)', osid, uid);
-                bot.notice(from, words[1] + ' added as user to the ' + words[2] + ' orderset');
+                bot.say(from, words[1] + ' added as user to the ' + words[2] + ' orderset');
             }
             break;
         case 'deleteuser':
             if (words.length != 3 || words[1].length === 0 || words[2].length === 0) {
-                bot.notice(from, 'Syntax: @deleteuser <nick> <orderset>');
+                bot.say(from, 'Syntax: @deleteuser <nick> <orderset>');
                 return false;
             }
 
@@ -536,7 +536,7 @@ function handlePrimaryCommand(args) {
             });
 
             if (os === undefined) {
-                bot.notice(from, words[2] + ' is not a registered orderset');
+                bot.say(from, words[2] + ' is not a registered orderset');
                 return false;
             }
 
@@ -547,7 +547,7 @@ function handlePrimaryCommand(args) {
             });
 
             if (u === undefined) {
-                bot.notice(from, words[1] + ' is not a registered user');
+                bot.say(from, words[1] + ' is not a registered user');
                 return false;
             }
 
@@ -558,17 +558,17 @@ function handlePrimaryCommand(args) {
             });
 
             if (ou == -1) {
-                bot.notice(from, words[1] + ' is not assigned to the ' + words[2] + ' orderset');
+                bot.say(from, words[1] + ' is not assigned to the ' + words[2] + ' orderset');
                 return false;
             }
 
             store.orderset_users.splice(ou, 1);
             db.run('DELETE FROM orderset_users WHERE orderset_id = ? AND user_id = ?', osid, uid);
-            bot.notice(from, words[1] + ' user removed from the ' + words[2] + ' orderset');
+            bot.say(from, words[1] + ' user removed from the ' + words[2] + ' orderset');
             break;
         case 'listusers':
             if (words.length != 2 || words[1].length === 0) {
-                bot.notice(from, 'Syntax: @listusers <orderset>');
+                bot.say(from, 'Syntax: @listusers <orderset>');
                 return false;
             }
 
@@ -577,7 +577,7 @@ function handlePrimaryCommand(args) {
             });
 
             if (os === undefined) {
-                bot.notice(from, words[1] + ' is not a registered orderset');
+                bot.say(from, words[1] + ' is not a registered orderset');
                 return false;
             }
 
@@ -594,15 +594,15 @@ function handlePrimaryCommand(args) {
             });
 
             if (userArr.length === 0) {
-                bot.notice(from, 'There are no users assigned to the ' + words[1] + ' orderset');
+                bot.say(from, 'There are no users assigned to the ' + words[1] + ' orderset');
                 return false;
             }
 
-            bot.notice(from, 'Users in orderset ' + words[1] + ': ' + userArr.join(', '));
+            bot.say(from, 'Users in orderset ' + words[1] + ': ' + userArr.join(', '));
             break;
         case 'addchan':
             if (words.length != 3 || words[1].length === 0 || words[2].length === 0) {
-                bot.notice(from, 'Syntax: @addchan <channel> <orderset>');
+                bot.say(from, 'Syntax: @addchan <channel> <orderset>');
                 return false;
             }
 
@@ -611,7 +611,7 @@ function handlePrimaryCommand(args) {
             });
 
             if (os === undefined) {
-                bot.notice(from, words[2] + ' is not a registered orderset');
+                bot.say(from, words[2] + ' is not a registered orderset');
                 return false;
             }
 
@@ -629,7 +629,7 @@ function handlePrimaryCommand(args) {
                     store.orderset_channels.push({orderset_id: osid, channel_id: chid});
 
                     db.run('INSERT INTO orderset_channels (`orderset_id`, `channel_id`) VALUES (?, ?)', osid, chid);
-                    bot.notice(from, words[1] + ' channel added to ' + words[2] + ' orderset');
+                    bot.say(from, words[1] + ' channel added to ' + words[2] + ' orderset');
                 });
             } else {
                 chid = ch.id;
@@ -637,12 +637,12 @@ function handlePrimaryCommand(args) {
                 store.orderset_channels.push({orderset_id: osid, channel_id: chid});
 
                 db.run('INSERT INTO orderset_channels (`orderset_id`, `channel_id`) VALUES (?, ?)', osid, chid);
-                bot.notice(from, words[1] + ' channel added to ' + words[2] + ' orderset');
+                bot.say(from, words[1] + ' channel added to ' + words[2] + ' orderset');
             }
             break;
         case 'deletechan':
             if (words.length != 3 || words[1].length === 0 || words[2].length === 0) {
-                bot.notice(from, 'Syntax: @deletechan <channel> <orderset>');
+                bot.say(from, 'Syntax: @deletechan <channel> <orderset>');
                 return false;
             }
 
@@ -651,7 +651,7 @@ function handlePrimaryCommand(args) {
             });
 
             if (os === undefined) {
-                bot.notice(from, words[2] + ' is not a registered orderset');
+                bot.say(from, words[2] + ' is not a registered orderset');
                 return false;
             }
 
@@ -662,7 +662,7 @@ function handlePrimaryCommand(args) {
             });
 
             if (ch === undefined) {
-                bot.notice(from, words[1] + ' is not a registered channel');
+                bot.say(from, words[1] + ' is not a registered channel');
                 return false;
             }
 
@@ -673,17 +673,17 @@ function handlePrimaryCommand(args) {
             });
 
             if (oc == -1) {
-                bot.notice(from, words[1] + ' is not assigned to the ' + words[2] + ' orderset');
+                bot.say(from, words[1] + ' is not assigned to the ' + words[2] + ' orderset');
                 return false;
             }
 
             store.orderset_channels.splice(oc, 1);
             db.run('DELETE FROM orderset_channels WHERE orderset_id = ? AND channel_id = ?', osid, chid);
-            bot.notice(from, words[1] + ' channel removed from the ' + words[2] + ' orderset');
+            bot.say(from, words[1] + ' channel removed from the ' + words[2] + ' orderset');
             break;
         case 'listchans':
             if (words.length != 2 || words[1].length === 0) {
-                bot.notice(from, 'Syntax: @listchans <orderset>');
+                bot.say(from, 'Syntax: @listchans <orderset>');
                 return false;
             }
 
@@ -692,7 +692,7 @@ function handlePrimaryCommand(args) {
             });
 
             if (os === undefined) {
-                bot.notice(from, words[1] + ' is not a registered orderset');
+                bot.say(from, words[1] + ' is not a registered orderset');
                 return false;
             }
 
@@ -709,45 +709,45 @@ function handlePrimaryCommand(args) {
             });
 
             if (chanArr.length === 0) {
-                bot.notice(from, 'No channels assigned to orderset ' + words[1]);
+                bot.say(from, 'No channels assigned to orderset ' + words[1]);
                 return false;
             }
 
-            bot.notice(from, 'Channels in ' + words[1] + ' orderset: ' + chanArr.join(', '));
+            bot.say(from, 'Channels in ' + words[1] + ' orderset: ' + chanArr.join(', '));
             break;
         case 'addadmin':
             if (words.length != 2 || words[1].length === 0) {
-                bot.notice(from, 'Syntax: @addadmin <nick>');
+                bot.say(from, 'Syntax: @addadmin <nick>');
                 return false;
             }
 
             if (store.admins.find(function (admin) { return admin.nick == words[1]; }) !== undefined) {
-                bot.notice(words[1] + ' is already an admin.');
+                bot.say(words[1] + ' is already an admin.');
                 return false;
             }
 
             store.admins.push({nick: words[1]});
             db.run('INSERT INTO admins (`nick`) VALUES (?)', words[1]);
-            bot.notice(from, words[1] + ' added to admins');
+            bot.say(from, words[1] + ' added to admins');
             break;
         case 'deleteadmin':
             if (words.length != 2 || words[1].length === 0) {
-                bot.notice(from, 'Syntax: @deleteadmin <nick>');
+                bot.say(from, 'Syntax: @deleteadmin <nick>');
                 return false;
             }
 
             if (store.admins.find(function (admin) { return admin.nick == words[1]; }) === undefined) {
-                bot.notice(words[1] + ' is not a registered admin.');
+                bot.say(words[1] + ' is not a registered admin.');
                 return false;
             }
 
             store.admins.splice(store.admins.findIndex(function (admin) { return admin.nick == words[1]; }), 1);
             db.run('DELETE FROM admins WHERE nick = ?', words[1]);
-            bot.notice(from, words[1] + ' removed from admins');
+            bot.say(from, words[1] + ' removed from admins');
             break;
         case 'listadmins':
             if (words.length != 1) {
-                bot.notice(from, 'Syntax: @listadmins');
+                bot.say(from, 'Syntax: @listadmins');
                 return false;
             }
 
@@ -756,21 +756,21 @@ function handlePrimaryCommand(args) {
             });
 
             if (adminArr.length === 0) {
-                bot.notice(from, 'No admins registered');
+                bot.say(from, 'No admins registered');
                 return false;
             }
 
-            bot.notice(from, 'Admins: ' + adminArr.join(', '));
+            bot.say(from, 'Admins: ' + adminArr.join(', '));
             break;
         case 'addorderset':
             if (words.length != 2 || words[1].length === 0) {
-                bot.notice(from, 'Syntax: @addorderset <orderset>');
+                bot.say(from, 'Syntax: @addorderset <orderset>');
                 return false;
             }
 
             // Don't allow 'update' as prefix of orderset name
             if (words[1].substr(0, 6) == 'update') {
-                bot.notice(from, 'The word "update" can\'t be the prefix of orderset names');
+                bot.say(from, 'The word "update" can\'t be the prefix of orderset names');
                 return false;
             }
 
@@ -779,19 +779,19 @@ function handlePrimaryCommand(args) {
             });
 
             if (os !== undefined) {
-                bot.notice(from, words[1] + ' is already a registered orderset');
+                bot.say(from, words[1] + ' is already a registered orderset');
                 return false;
             }
 
             db.run('INSERT INTO ordersets (`name`) VALUES (?)', words[1], function (err) {
                 osid = this.lastID;
                 store.ordersets.push({name: words[1], id: osid});
-                bot.notice(from, words[1] + ' added to ordersets');
+                bot.say(from, words[1] + ' added to ordersets');
             });
             break;
         case 'deleteorderset':
             if (words.length != 2 || words[1].length === 0) {
-                bot.notice(from, 'Syntax: @deleteorderset <orderset>');
+                bot.say(from, 'Syntax: @deleteorderset <orderset>');
                 return false;
             }
 
@@ -800,7 +800,7 @@ function handlePrimaryCommand(args) {
             });
 
             if (os === -1) {
-                bot.notice(from, words[1] + ' is not a registered orderset');
+                bot.say(from, words[1] + ' is not a registered orderset');
                 return false;
             }
 
@@ -825,11 +825,11 @@ function handlePrimaryCommand(args) {
 
             store.ordersets.splice(os, 1);
 
-            bot.notice(from, words[1] + ' removed from ordersets');
+            bot.say(from, words[1] + ' removed from ordersets');
             break;
         case 'listordersets':
             if (words.length != 1) {
-                bot.notice(from, 'Syntax: @listordersets');
+                bot.say(from, 'Syntax: @listordersets');
                 return false;
             }
 
@@ -838,11 +838,11 @@ function handlePrimaryCommand(args) {
             });
 
             if (osArr.length === 0) {
-                bot.notice(from, 'No ordersets registered');
+                bot.say(from, 'No ordersets registered');
                 return false;
             }
 
-            bot.notice(from, 'Ordersets: ' + osArr.join(', '));
+            bot.say(from, 'Ordersets: ' + osArr.join(', '));
             break;
         default:
             // Unreachable
@@ -868,8 +868,8 @@ function handleOrderCommand(args) {
         oName = command.substr(6);
 
         if (words.length < 2 || oName.length === 0) {
-            bot.notice(from, 'Syntax: @update<orderset> <priority> <region> <link> <optional info>');
-            bot.notice(from, 'Syntax: @update<orderset> clear <optional prio>');
+            bot.say(from, 'Syntax: @update<orderset> <priority> <region> <link> <optional info>');
+            bot.say(from, 'Syntax: @update<orderset> clear <optional prio>');
             return false;
         }
 
@@ -881,7 +881,7 @@ function handleOrderCommand(args) {
         });
 
         if (os === undefined) {
-            bot.notice(from, oName + ' is not a registered orderset');
+            bot.say(from, oName + ' is not a registered orderset');
             return false;
         }
 
@@ -891,7 +891,7 @@ function handleOrderCommand(args) {
         });
 
         if (u === undefined) {
-            bot.notice(from, 'You are not allowed to update this orderset.');
+            bot.say(from, 'You are not allowed to update this orderset.');
             return false;
         }
 
@@ -900,7 +900,7 @@ function handleOrderCommand(args) {
         });
 
         if (ou === undefined) {
-            bot.notice(from, 'You are not allowed to update this orderset.');
+            bot.say(from, 'You are not allowed to update this orderset.');
             return false;
         }
 
@@ -910,7 +910,7 @@ function handleOrderCommand(args) {
         });
 
         if (us === undefined || us.status < 3) {
-            bot.notice(from, 'You must be identified via NickServ.');
+            bot.say(from, 'You must be identified via NickServ.');
             return false;
         }
 
@@ -925,7 +925,7 @@ function handleOrderCommand(args) {
                 prio = parseInt(words[2]);
 
                 if (prio < 0 || prio > 5 || isNaN(prio)) {
-                    bot.notice(from, 'Priority can\'t be greater than 5');
+                    bot.say(from, 'Priority can\'t be greater than 5');
                     return false;
                 }
 
@@ -934,28 +934,28 @@ function handleOrderCommand(args) {
                 });
 
                 if (oid == -1) {
-                    bot.notice(from, 'No order with priority ' + prio + ' in orderset ' + oName);
+                    bot.say(from, 'No order with priority ' + prio + ' in orderset ' + oName);
                     return false;
                 }
 
                 db.run('DELETE FROM orders WHERE orderset_id = ? AND priority = ?', osid, prio);
                 store.orders.splice(oid, 1);
 
-                bot.notice(from, 'Priority ' + prio + ' cleared from orderset ' + oName);
+                bot.say(from, 'Priority ' + prio + ' cleared from orderset ' + oName);
             } else {
                 db.run('DELETE FROM orders WHERE orderset_id = ?', osid);
                 store.orders = store.orders.filter(function (o) {
                     return o.orderset_id != osid;
                 });
 
-                bot.notice(from, 'Orderset ' + oName + ' cleared');
+                bot.say(from, 'Orderset ' + oName + ' cleared');
             }
         } else {
             // Update one order
 
             // Check parameter count
             if (words.length < 4) {
-                bot.notice(from, 'Correct syntax: @update<orderset> <priority> <region> <link> <optional info>');
+                bot.say(from, 'Correct syntax: @update<orderset> <priority> <region> <link> <optional info>');
                 return false;
             }
 
@@ -966,7 +966,7 @@ function handleOrderCommand(args) {
 
             // Check parameter lengths
             if (prio > 5 || prio < 1 || isNaN(prio) || region.length > 64 || link.length > 64 || info.length > 64) {
-                bot.notice(from, 'Priority can\'t be greater than 5, region name, link and info length can\'t be greater than 64');
+                bot.say(from, 'Priority can\'t be greater than 5, region name, link and info length can\'t be greater than 64');
                 return false;
             }
 
@@ -989,7 +989,7 @@ function handleOrderCommand(args) {
                 info: info
             });
 
-            bot.notice(from, 'Order updated');
+            bot.say(from, 'Order updated');
         }
     } else {
         // Order listing?
@@ -1000,7 +1000,7 @@ function handleOrderCommand(args) {
         });
 
         if (os === undefined) {
-            bot.notice(from, oName + ' is not a registered orderset');
+            bot.say(from, oName + ' is not a registered orderset');
             return false;
         }
 
